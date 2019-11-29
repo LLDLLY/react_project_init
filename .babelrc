@@ -1,0 +1,24 @@
+{
+  "presets": [
+    "@babel/preset-react",
+    "@babel/preset-env"
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "corejs": false,
+        "regenerator": true,
+        "useESModules": false,
+        "helpers": false
+      }
+    ],
+    "@babel/plugin-proposal-function-bind",
+    "@babel/syntax-dynamic-import",
+    // "react-hot-loader/babel",
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    ["@babel/plugin-proposal-class-properties", {"loose": true}]
+  ]
+}
+
+
