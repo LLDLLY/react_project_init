@@ -9,16 +9,6 @@ switch (process.env.NODE_ENV) {
 
         // 生产环境url
         baseUrl = "http://pro.com/"
-
-        if (process.env.VUE_APP_TITLE === 'test') {
-            // 测试环境地址
-            baseUrl = "http://test.com/";
-        }
-
-        if (process.env.VUE_APP_TITLE === 'uat') {
-            // uat 环境地址
-            baseUrl = "http://uat.com/";
-        }
         break;
 }
 
