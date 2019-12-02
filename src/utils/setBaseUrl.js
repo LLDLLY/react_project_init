@@ -11,5 +11,5 @@ switch (process.env.NODE_ENV) {
         baseUrl = "http://pro.com/"
         break;
 }
-
+console.log(baseUrl);
 export default baseUrl;

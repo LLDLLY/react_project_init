@@ -3,6 +3,11 @@ const path = require('path');
 
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HappyPack = require('happypack');
+const os = require('os'); // node 提供的系统操作模块
+
+ // 根据我的系统的内核数量 指定线程池个数 也可以其他数量
+ const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 
 const isProd = process.env.NODE_ENV === 'prod'; // 是否是生产环境, 测试环境需要显示源码
 
@@ -15,7 +20,8 @@ const rules = [
     test: /\.js$/,
     include: resolve('src'),
     exclude: resolve('node_modules'),
-    loaders: ['babel-loader?cacheDirectory'],
+    use: 'happypack/loader?id=babel',
+    // loaders: ['babel-loader?cacheDirectory'],
   },
   {
     test: /\.css$/,
@@ -95,11 +101,20 @@ const plugins = [
     template: './src/index.html'
   }),
 
-  // 分离css成单独文件
-  new MiniCssExtractPlugin({
-    filename: 'assets/css/[name].[hash].css',
-    // chunkFilename: 'assets/css/[id].[hash].css',
+  new HappyPack({ // 基础参数设置
+    id: 'babel', // 上面loader?后面指定的id
+    loaders: ['babel-loader?cacheDirectory'], // 实际匹配处理的loader
+    threadPool: happyThreadPool,
+    // cache: true // 已被弃用
+    verbose: true
   }),
+
+
+// 分离css成单独文件
+new MiniCssExtractPlugin({
+  filename: 'assets/css/[name].[hash].css',
+  // chunkFilename: 'assets/css/[id].[hash].css',
+}),
 
   // 自动加载模块，而不必到处 import 或 require 。
   // new webpack.ProvidePlugin({ 
@@ -139,10 +154,16 @@ const config = {
     rules,
   },
   resolve: {
+    modules: [ // 优化模块查找路径
+      resolve('src'),
+      resolve('node_modules') // 指定node_modules所在位置 当你import 第三方模块时 直接从这个路径下搜索寻找
+    ],
     // 设置别名
     alias: {
       '@': resolve('src')// 这样配置后 @ 可以指向 src 目录
-    }
+    },
+    // 当引入模块时不带文件后缀 webpack会根据此配置自动解析确定的文件后缀
+    extensions: ['.js']
   },
   plugins,
   devServer
